@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     environment:
       NODE_ENV: development
@@ -14,12 +14,12 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./src
+          path: ./frontend/src
           target: /app/src
           ignore:
             - node_modules/
         - action: rebuild
-          path: package.json
+          path: ./frontend/package.json
 
   db:
     image: postgres:17
