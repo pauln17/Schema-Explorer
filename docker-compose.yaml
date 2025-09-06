@@ -3,15 +3,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
     ports:
       - '3000:3000'
     env_file:
       - .env
     depends_on:
       - db
-    volumes:
-      - .:/app
-      - /app/node_modules
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
 
   db:
     image: postgres:17
