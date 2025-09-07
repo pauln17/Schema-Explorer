@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "npx ts-node ./src/server.ts",
+    "dev": "nodemon ./src/server.ts",
     "build": "",
     "start": "",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,8 +18,17 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "nodemon": "^3.1.10",
     "prisma": "^6.15.0",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
+  },
+  "nodemonConfig": {
+    "watch": ["src"],
+    "ext": "ts",
+    "execMap": { "ts": "ts-node ./src/server.ts" },
+    "legacyWatch": true,
+    "delay": "500"
   }
 }

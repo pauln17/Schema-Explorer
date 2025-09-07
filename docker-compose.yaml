@@ -1,5 +1,6 @@
 services:
-  app:
+  frontend:
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -20,8 +21,24 @@ services:
             - node_modules/
         - action: rebuild
           path: ./frontend/package.json
-
+  backend:
+    container_name: backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://admin:secret@db:5432/mydatabase
+      NODE_ENV: development
+    ports: 
+      - 4000:4000
+    depends_on:
+      - db
+    volumes:
+      - ./backend/src:/app/src        # Only mount your source
+      - /app/node_modules     
   db:
+    container_name: db
     image: postgres:17
     restart: always
     environment:
