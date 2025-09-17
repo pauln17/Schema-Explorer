@@ -28,14 +28,14 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://admin:secret@db:5432/mydatabase
+      DATABASE_URL: postgresql://admin:secret@db:5432/schema-explorer
       NODE_ENV: development
     ports: 
       - 4000:4000
     depends_on:
       - db
     volumes:
-      - ./backend/src:/app/src        # Only mount your source
+      - ./backend/src:/app/src 
       - /app/node_modules     
   db:
     container_name: db
