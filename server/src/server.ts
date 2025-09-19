@@ -8,7 +8,6 @@ import cors from 'cors';
 
 import { prisma } from "./lib/prisma";
 
-
 const app = express();
 const PORT = 5001;
 

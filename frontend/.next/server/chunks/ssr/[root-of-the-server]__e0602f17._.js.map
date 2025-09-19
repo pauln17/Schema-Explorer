@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///app/src/pages/index.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <div color=\"white\">adsadsaa</div>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACtB,qBACE,qKAAC;QAAI,OAAM;kBAAQ;;;;;;AAEvB","debugId":null}}]
-}
