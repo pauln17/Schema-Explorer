@@ -17,7 +17,7 @@ RUN npx prisma generate
 COPY . .
 
 # 5. Expose port
-EXPOSE 4000
+EXPOSE 5001
 
 # 6. Start app
 CMD ["npm", "run", "dev"]

@@ -1,14 +1,23 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: "../.env" });
+
 import express, { Request, Response } from "express";
-import { PrismaClient } from '@prisma/client';
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth";
 import cors from 'cors';
 
-const prisma = new PrismaClient()
+import { prisma } from "./lib/prisma";
+
+
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = 5001;
+
+// Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands
+app.all('/api/auth/{*any}', toNodeHandler(auth)); 
 
 // Middleware (optional)
 const allowedOrigins = [
-    'http://localhost:4000'
+    'http://localhost:5001'
 ];
 
 app.use(
@@ -27,3 +36,4 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+

@@ -28,10 +28,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://admin:secret@db:5432/schema-explorer
+      DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
     ports: 
-      - 4000:4000
+      - 5001:5001
+    env_file:
+      - .env
     depends_on:
       - db
     volumes:
