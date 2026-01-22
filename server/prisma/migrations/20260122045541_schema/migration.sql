@@ -1,13 +1,13 @@
 -- CreateEnum
-CREATE TYPE "public"."Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateTable
-CREATE TABLE "public"."user" (
+CREATE TABLE "user" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
     "passwordHash" TEXT NOT NULL,
-    "role" "public"."Role" NOT NULL DEFAULT 'USER',
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "emailVerified" BOOLEAN NOT NULL DEFAULT false,
@@ -17,7 +17,7 @@ CREATE TABLE "public"."user" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."repository" (
+CREATE TABLE "repository" (
     "id" SERIAL NOT NULL,
     "userId" TEXT NOT NULL,
 
@@ -25,7 +25,7 @@ CREATE TABLE "public"."repository" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."table" (
+CREATE TABLE "table" (
     "id" SERIAL NOT NULL,
     "repositoryId" INTEGER NOT NULL,
 
@@ -33,7 +33,7 @@ CREATE TABLE "public"."table" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."column" (
+CREATE TABLE "column" (
     "id" SERIAL NOT NULL,
     "tableId" INTEGER NOT NULL,
 
@@ -41,7 +41,7 @@ CREATE TABLE "public"."column" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."columnreferences" (
+CREATE TABLE "columnreferences" (
     "id" SERIAL NOT NULL,
     "sourceColumnId" INTEGER NOT NULL,
     "targetColumnId" INTEGER NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE "public"."columnreferences" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."session" (
+CREATE TABLE "session" (
     "id" TEXT NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "token" TEXT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "public"."session" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."account" (
+CREATE TABLE "account" (
     "id" TEXT NOT NULL,
     "accountId" TEXT NOT NULL,
     "providerId" TEXT NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE "public"."account" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."verification" (
+CREATE TABLE "verification" (
     "id" TEXT NOT NULL,
     "identifier" TEXT NOT NULL,
     "value" TEXT NOT NULL,
@@ -95,28 +95,28 @@ CREATE TABLE "public"."verification" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_email_key" ON "public"."user"("email");
+CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "session_token_key" ON "public"."session"("token");
+CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 
 -- AddForeignKey
-ALTER TABLE "public"."repository" ADD CONSTRAINT "repository_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "repository" ADD CONSTRAINT "repository_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."table" ADD CONSTRAINT "table_repositoryId_fkey" FOREIGN KEY ("repositoryId") REFERENCES "public"."repository"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "table" ADD CONSTRAINT "table_repositoryId_fkey" FOREIGN KEY ("repositoryId") REFERENCES "repository"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."column" ADD CONSTRAINT "column_tableId_fkey" FOREIGN KEY ("tableId") REFERENCES "public"."table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "column" ADD CONSTRAINT "column_tableId_fkey" FOREIGN KEY ("tableId") REFERENCES "table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."columnreferences" ADD CONSTRAINT "columnreferences_sourceColumnId_fkey" FOREIGN KEY ("sourceColumnId") REFERENCES "public"."column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "columnreferences" ADD CONSTRAINT "columnreferences_sourceColumnId_fkey" FOREIGN KEY ("sourceColumnId") REFERENCES "column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."columnreferences" ADD CONSTRAINT "columnreferences_targetColumnId_fkey" FOREIGN KEY ("targetColumnId") REFERENCES "public"."column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "columnreferences" ADD CONSTRAINT "columnreferences_targetColumnId_fkey" FOREIGN KEY ("targetColumnId") REFERENCES "column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,5 +1,6 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
+  "exclude": ["prisma.config.ts", "generated"],
   "compilerOptions": {
     // File Layout
     "rootDir": "./src",
@@ -7,8 +8,10 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2023",
+    "esModuleInterop": true,
     // For nodejs:
     "lib": ["esnext"],
     "types": ["node"],
