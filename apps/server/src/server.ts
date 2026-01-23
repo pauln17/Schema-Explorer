@@ -9,7 +9,7 @@ import cors from 'cors';
 import { prisma } from "./lib/prisma";
 
 const app = express();
-const PORT = 5001;
+
 
 // Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands
 app.all('/api/auth/{*any}', toNodeHandler(auth)); 
@@ -32,7 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on http://localhost:${process.env.PORT}`);
 });
 
