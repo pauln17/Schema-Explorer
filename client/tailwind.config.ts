@@ -8,7 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-        2222222222
     },
   },
   plugins: [],

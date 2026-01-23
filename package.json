@@ -1,0 +1,17 @@
+{
+  "name": "schema-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts,.tsx,.mjs,.cjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "globals": "^17.1.0",
+    "jiti": "^2.6.1",
+    "typescript-eslint": "^8.53.1"
+  }
+}
