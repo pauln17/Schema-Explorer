@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "private": true,  
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.19",
     "@xyflow/react": "^12.8.4",
     "better-auth": "^1.4.17",
     "dotenv": "^17.2.2",

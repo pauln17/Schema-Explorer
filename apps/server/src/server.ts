@@ -1,18 +1,17 @@
+// DotENV
 import dotenv from 'dotenv';
 dotenv.config({ path: "../.env" });
 
+// General
 import express, { Request, Response } from "express";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from 'cors';
 
-import { prisma } from "./lib/prisma";
+// Route Imports
+import userRoutes from "./routes/user";
 
 const app = express();
-
-
-// Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands
-app.all('/api/auth/{*any}', toNodeHandler(auth)); 
 
 // Middleware (optional)
 const allowedOrigins = [
@@ -24,12 +23,14 @@ app.use(
         origin: allowedOrigins,
     })
 );
+
 app.use(express.json());
 
+// Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands; TLDR: Tells Express
+app.all('/api/auth/{*any}', toNodeHandler(auth)); 
+
 // Routes
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from Express + TypeScript!");
-});
+app.use('/api/users', userRoutes);
 
 // Start server
 app.listen(process.env.PORT, () => {
