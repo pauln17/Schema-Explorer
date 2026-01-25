@@ -26,7 +26,7 @@ app.use(
 
 app.use(express.json());
 
-// Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands; TLDR: Tells Express
+// Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands. TLDR: Handles Better-Auth Requests from Frontend
 app.all('/api/auth/{*any}', toNodeHandler(auth)); 
 
 // Routes
