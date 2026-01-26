@@ -1,15 +1,16 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../generated/prisma/client'
 
+console.log(process.env.DATABASE_URL)
 const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
+    connectionString: process.env.DATABASE_URL
 })
 
 // Telling TS To ALlow Access to A Property That Will Exist At Runtime, Because TS Can't See Runtime Mutations
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
 const prisma = globalForPrisma.prisma || new PrismaClient({
-adapter,
+adapter
 })
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma

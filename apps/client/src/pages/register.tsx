@@ -1,7 +1,41 @@
 import Link from 'next/link'
-
+import { useRouter } from 'next/router'
+import { useState} from 'react'
+import { authClient } from '@/lib/auth-client'
 
 export default function AuthRegister() {
+    const router = useRouter()
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        setError('')
+
+        if(password.length < 8) {
+            setError('Password must be at least 8 characters long')
+            setLoading(false)
+            return
+        }
+
+        try {
+            const result = await authClient.signUp.email({
+                name: [firstName, lastName].join(" "), // required
+                email: email, // required
+                password: password, // required
+            })
+            router.push('/dashboard')
+        } catch (err) {
+            setError('An error occurred during sign-up')
+            console.error(err)
+        } finally { setLoading(false) }
+    }
+
     return (
         <div className="flex flex-col h-screen">
             <nav className="block md:hidden text-white px-6 py-4 flex justify-center items-center md:justify-between">
@@ -35,26 +69,32 @@ export default function AuthRegister() {
                 <div className="rounded-lg px-6 pb-6 flex flex-col items-center justify-center">
                     <h1 className="text-2xl font-bold mb-2">Register Account</h1>
                     <p className="text-gray-300 mb-8">Create an account to get started</p>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="mb-4 flex justify-center gap-4">
                             <div>
                                 <label htmlFor="firstName" className="block text-white mb-1">First Name</label>
-                                <input type="text"  id="firstName" name="firstName" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500"/>
+                                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} id="firstName" name="firstName" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500"/>
                             </div>
                             <div>
                                 <label htmlFor="lastName" className="block text-white mb-1">Last Name</label>
-                                <input type="text" id="lastName" name="lastName" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500"/>
+                                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} id="lastName" name="lastName" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500"/>
                             </div>
                         </div>
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-white mb-1">Email</label>
-                            <input type="email" id="email" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500" />
+                            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} id="email" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500" />
                         </div>
-                        <div className="mb-8">
-                            <label htmlFor="password" className="block text-white mb-1">Password</label>
-                            <input type="password" id="password" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500" />
+                        <div className="mb-6">
+                            <label htmlFor="password" className="block text-white">Password</label>
+                            <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} id="password" className="w-full px-4 py-2 rounded-md bg-gray-900 text-white border border-gray-700 focus:outline-none focus:border-white-500" />
                         </div>
-                        <button type="submit" className="w-full px-4 py-2 rounded-md bg-white text-black font-bold">Register</button>
+                        {error ? (
+                            <div className="rounded-md bg-red-300 text-black font-bold mb-4 p-2">{error}</div> 
+                        )
+                        : null}
+                        <button type="submit" disabled={loading} className="w-full px-4 py-2 rounded-md bg-white text-black font-bold">
+                            {loading ? "Registering..." : "Register"}
+                        </button>
                     </form>
                     <p className="text-gray-300 mb-4 mt-6">Already have an account? <Link href="/login" className="text-white font-bold">Login</Link></p>
                 </div>

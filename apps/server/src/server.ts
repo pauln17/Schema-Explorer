@@ -1,6 +1,5 @@
 // DotENV
-import dotenv from 'dotenv';
-dotenv.config({ path: "../.env" });
+import "dotenv/config"
 
 // General
 import express, { Request, Response } from "express";
@@ -13,21 +12,26 @@ import userRoutes from "./routes/user";
 
 const app = express();
 
-// Middleware (optional)
+// Middleware - CORS: Only allow requests from the frontend
 const allowedOrigins = [
-    'http://localhost:5001'
+    'http://localhost:3000'  // Next.js frontend (default port)
 ];
 
 app.use(
     cors({
         origin: allowedOrigins,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
 
-app.use(express.json());
-
 // Uses (toNodeHandler) to adapt auth (Better-Auth router instance) in a way Express understands. TLDR: Handles Better-Auth Requests from Frontend
-app.all('/api/auth/{*any}', toNodeHandler(auth)); 
+// Note: express.json() should NOT be applied before the auth handler
+app.all('/api/auth/{*any}', toNodeHandler(auth));
+
+// Apply express.json() only to routes that need it (after auth handler)
+app.use(express.json()); 
 
 // Routes
 app.use('/api/users', userRoutes);

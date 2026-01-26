@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "nodemon ./src/server.ts",
+    "dev": "cd . && nodemon ./src/server.ts",
     "build": "",
     "start": "",
     "test": "echo \"Error: no test specified\" && exit 1"
