@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
@@ -34,14 +35,14 @@ export default function AuthLogin() {
         <div className="flex flex-col h-screen">
             <nav className="block md:hidden text-white px-6 py-4 flex justify-center items-center md:justify-between">
                 <Link href="/" className="text-3xl">
-                    Schema Explorer
+                    Schema Visualizer
                 </Link>
             </nav>
             <main className="grid grid-cols-1 md:grid-cols-[55%_45%] h-full p-3 items-stretch">
-                <div className="hidden md:grid grid-rows-[50%_50%] place-items-center h-full bg-[radial-gradient(ellipse_250%_150%_at_bottom,_black_30%,_#6D28D9_40%,_#A855F7_50%,_#E0B4FF_75%,_#E8D5F5_85%,_#D4C4E0_95%)] rounded-4xl shadow-[inset_0_0_30px_rgba(0,0,0,0.75)]">
+                <div className="hidden md:grid grid-rows-[50%_50%] place-items-center h-full bg-[radial-gradient(ellipse_250%_150%_at_bottom,_black_30%,_#6D28D9_40%,_#A855F7_50%,_#E0B4FF_75%,_#D4C4E0_95%)] rounded-4xl shadow-[inset_0_0_30px_rgba(0,0,0,0.75)]">
                     <div></div>
                     <div className="flex flex-col items-center justify-center max-w-md">
-                        <Link href="/" className="text-white text-4xl mb-2">Schema Explorer</Link>
+                        <Link href="/" className="text-white text-4xl mb-2">Schema Visualizer</Link>
                         <p className="text-center mb-8">Expose invisible schema problems before they surface in production</p>
                         <div className="flex flex-col gap-4 w-fit">
                             <div className="w-full p-4 rounded-lg bg-gray-200 text-black items-start justify-start flex gap-3 pr-16 font-bold">
@@ -61,6 +62,14 @@ export default function AuthLogin() {
                     </div>
                 </div>
                 <div className="rounded-lg px-6 pb-6 flex flex-col items-center justify-center">
+                    <Image 
+                        src="/logo.png" 
+                        alt="Schema Logo" 
+                        width={120} 
+                        height={120}
+                        className="object-contain mb-6"
+                        priority
+                    />
                     <h1 className="text-2xl font-bold mb-2">Account Login</h1>
                     <p className="text-gray-300 mb-8">Log in to start exploring schemas</p>
                     <form onSubmit={handleSubmit} className="max-w-sm w-full">
