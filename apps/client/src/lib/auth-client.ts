@@ -4,3 +4,9 @@ export const authClient = createAuthClient({
     baseURL: "http://localhost:5001",
     credentials: "include"
 })
+
+export type AuthInput = {
+    name: string
+    email: string
+    password: string
+}

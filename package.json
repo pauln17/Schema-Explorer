@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/client", "apps/server"],
+  "workspaces": [
+    "apps/client",
+    "apps/server"
+  ],
   "scripts": {
     "lint": "eslint .",
     "dev:client": "npm run dev -w client",
@@ -15,8 +18,10 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "globals": "^17.1.0",
     "jiti": "^2.6.1",
+    "prettier": "3.8.1",
     "typescript-eslint": "^8.53.1"
   }
 }

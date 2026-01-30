@@ -4,7 +4,8 @@ import { prisma } from "./prisma"
 
 // Creating Better-Auth Instance w/ Prisma Adapter
 export const auth = betterAuth({
-    baseURL: "http://localhost:5001", // Server URL - set explicitly for security
+  basePath: "/auth",  
+  baseURL: "http://localhost:5001", // Server URL - set explicitly for security
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
@@ -16,14 +17,4 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24 // 1 day (every 1 day the session expiration is updated)
   },
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID as string, 
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string, 
-    }, 
-    // google: {
-    //   clientId: "YOUR_GOOGLE_CLIENT_ID",
-    //   clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
-    // },
-  }, 
 });

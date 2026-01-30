@@ -1,12 +1,14 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "CollaboratorRole" AS ENUM ('VIEWER', 'EDITOR');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
-    "passwordHash" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -17,36 +19,49 @@ CREATE TABLE "user" (
 );
 
 -- CreateTable
-CREATE TABLE "repository" (
+CREATE TABLE "schema" (
     "id" SERIAL NOT NULL,
     "userId" TEXT NOT NULL,
+    "isPublished" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "repository_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "schema_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "table" (
+CREATE TABLE "SchemaCollaborator" (
     "id" SERIAL NOT NULL,
-    "repositoryId" INTEGER NOT NULL,
+    "schemaId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    "role" "CollaboratorRole" NOT NULL DEFAULT 'VIEWER',
 
-    CONSTRAINT "table_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SchemaCollaborator_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "column" (
+CREATE TABLE "schema-table" (
     "id" SERIAL NOT NULL,
-    "tableId" INTEGER NOT NULL,
+    "schemaId" INTEGER NOT NULL,
 
-    CONSTRAINT "column_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "schema-table_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "columnreferences" (
+CREATE TABLE "table-column" (
+    "id" SERIAL NOT NULL,
+    "schemaTableId" INTEGER NOT NULL,
+
+    CONSTRAINT "table-column_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "column-relation" (
     "id" SERIAL NOT NULL,
     "sourceColumnId" INTEGER NOT NULL,
     "targetColumnId" INTEGER NOT NULL,
 
-    CONSTRAINT "columnreferences_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "column-relation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -98,22 +113,31 @@ CREATE TABLE "verification" (
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "SchemaCollaborator_schemaId_userId_key" ON "SchemaCollaborator"("schemaId", "userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 
 -- AddForeignKey
-ALTER TABLE "repository" ADD CONSTRAINT "repository_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "schema" ADD CONSTRAINT "schema_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "table" ADD CONSTRAINT "table_repositoryId_fkey" FOREIGN KEY ("repositoryId") REFERENCES "repository"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SchemaCollaborator" ADD CONSTRAINT "SchemaCollaborator_schemaId_fkey" FOREIGN KEY ("schemaId") REFERENCES "schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "column" ADD CONSTRAINT "column_tableId_fkey" FOREIGN KEY ("tableId") REFERENCES "table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SchemaCollaborator" ADD CONSTRAINT "SchemaCollaborator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "columnreferences" ADD CONSTRAINT "columnreferences_sourceColumnId_fkey" FOREIGN KEY ("sourceColumnId") REFERENCES "column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "schema-table" ADD CONSTRAINT "schema-table_schemaId_fkey" FOREIGN KEY ("schemaId") REFERENCES "schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "columnreferences" ADD CONSTRAINT "columnreferences_targetColumnId_fkey" FOREIGN KEY ("targetColumnId") REFERENCES "column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "table-column" ADD CONSTRAINT "table-column_schemaTableId_fkey" FOREIGN KEY ("schemaTableId") REFERENCES "schema-table"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "column-relation" ADD CONSTRAINT "column-relation_sourceColumnId_fkey" FOREIGN KEY ("sourceColumnId") REFERENCES "table-column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "column-relation" ADD CONSTRAINT "column-relation_targetColumnId_fkey" FOREIGN KEY ("targetColumnId") REFERENCES "table-column"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -3,6 +3,9 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState} from 'react'
 import { authClient } from '@/lib/auth-client'
+import { AuthInput } from '@/lib/auth-client'
+
+type registerData = AuthInput;
 
 export default function AuthRegister() {
     const router = useRouter()
@@ -12,6 +15,12 @@ export default function AuthRegister() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const registerData: registerData = {
+        name: [firstName, lastName].join(" "),
+        email: email,
+        password: password,
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -25,11 +34,7 @@ export default function AuthRegister() {
         }
 
         try {
-            const result = await authClient.signUp.email({
-                name: [firstName, lastName].join(" "), // required
-                email: email, // required
-                password: password, // required
-            })
+            await authClient.signUp.email(registerData)
             router.push('/dashboard')
         } catch (err) {
             setError('An error occurred during sign-up')

@@ -14,59 +14,75 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  email         String       @unique
-  name          String?
-  role          Role         @default(USER)
-  repository    Repository[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  emailVerified Boolean      @default(false)
-  image         String?
-  sessions      Session[]
-  accounts      Account[]
+  id                  String               @id @default(cuid())
+  email               String               @unique
+  name                String?
+  role                Role                 @default(USER)
+  schemas             Schema[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  emailVerified       Boolean              @default(false)
+  image               String?
+  sessions            Session[]
+  accounts            Account[]
+  schemaCollaborators SchemaCollaborator[]
 
   @@map("user")
 }
 
-model Repository {
-  id     Int     @id @default(autoincrement())
-  user   User    @relation(fields: [userId], references: [id])
-  userId String
-  table  Table[]
+model Schema {
+  id                  Int                  @id @default(autoincrement())
+  user                User                 @relation(fields: [userId], references: [id])
+  userId              String
+  isPublished         Boolean              @default(false)
+  schemaTable         SchemaTable[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  schemaCollaborators SchemaCollaborator[]
 
-  @@map("repository")
+  @@map("schema")
 }
 
-model Table {
-  id           Int        @id @default(autoincrement())
-  repository   Repository @relation(fields: [repositoryId], references: [id])
-  repositoryId Int
-  column       Column[]
+model SchemaCollaborator {
+  id       Int              @id @default(autoincrement())
+  schema   Schema           @relation(fields: [schemaId], references: [id])
+  schemaId Int
+  user     User             @relation(fields: [userId], references: [id])
+  userId   String
+  role     CollaboratorRole @default(VIEWER)
 
-  @@map("table")
+  @@unique([schemaId, userId])
 }
 
-model Column {
-  id      Int   @id @default(autoincrement())
-  table   Table @relation(fields: [tableId], references: [id])
-  tableId Int
+model SchemaTable {
+  id          Int           @id @default(autoincrement())
+  schema      Schema        @relation(fields: [schemaId], references: [id])
+  schemaId    Int
+  tableColumn TableColumn[]
+
+  @@map("schema-table")
+}
+
+model TableColumn {
+  id            Int         @id @default(autoincrement())
+  schemaTable   SchemaTable @relation(fields: [schemaTableId], references: [id])
+  schemaTableId Int
 
   // A relation is specified because there are two instances of ColumnReferences[] -- one for outgoing, one for incoming
-  outgoingReferences ColumnReferences[] @relation("SourceColumn") // Points to other columns
-  incomingReferences ColumnReferences[] @relation("TargetColumn") // Other columns can point here to reference
+  outgoingReferences ColumnRelation[] @relation("SourceColumn") // Points to other columns
+  incomingReferences ColumnRelation[] @relation("TargetColumn") // Other columns can point here to reference
 
-  @@map("column")
+  @@map("table-column")
 }
 
-model ColumnReferences {
-  id             Int    @id @default(autoincrement())
-  sourceColumn   Column @relation("SourceColumn", fields: [sourceColumnId], references: [id]) // The source column that is being "referenced" by another column
+model ColumnRelation {
+  id             Int         @id @default(autoincrement())
+  sourceColumn   TableColumn @relation("SourceColumn", fields: [sourceColumnId], references: [id]) // The source column that is being "referenced" by another column
   sourceColumnId Int
-  targetColumn   Column @relation("TargetColumn", fields: [targetColumnId], references: [id]) // The target column that is referencing a column of the target table
+  targetColumn   TableColumn @relation("TargetColumn", fields: [targetColumnId], references: [id]) // The target column that is referencing a column of the target table
   targetColumnId Int
 
-  @@map("columnreferences")
+  @@map("column-relation")
 }
 
 model Session {
@@ -117,4 +133,9 @@ model Verification {
 enum Role {
   USER
   ADMIN
+}
+
+enum CollaboratorRole {
+  VIEWER
+  EDITOR
 }
