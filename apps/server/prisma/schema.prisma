@@ -32,7 +32,7 @@ model User {
 
 model Schema {
   id                   String                @id @default(uuid())
-  user                 User                  @relation(fields: [userId], references: [id])
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId               String
   name                 String
   isPublished          Boolean               @default(false)
@@ -46,9 +46,9 @@ model Schema {
 
 model SchemaCollaboration {
   id       String           @id @default(uuid())
-  schema   Schema           @relation(fields: [schemaId], references: [id])
+  schema   Schema           @relation(fields: [schemaId], references: [id], onDelete: Cascade)
   schemaId String
-  user     User             @relation(fields: [userId], references: [id])
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
   role     CollaboratorRole @default(VIEWER)
 
@@ -67,7 +67,7 @@ model SchemaTable {
 
 model TableColumn {
   id            String      @id @default(uuid())
-  schemaTable   SchemaTable @relation(fields: [schemaTableId], references: [id])
+  schemaTable   SchemaTable @relation(fields: [schemaTableId], references: [id], onDelete: Cascade)
   schemaTableId String
 
   // A relation is specified because there are two instances of ColumnReferences[] -- one for outgoing, one for incoming
@@ -79,9 +79,9 @@ model TableColumn {
 
 model ColumnRelation {
   id             String      @id @default(uuid())
-  sourceColumn   TableColumn @relation("SourceColumn", fields: [sourceColumnId], references: [id]) // The source column that is being "referenced" by another column
+  sourceColumn   TableColumn @relation("SourceColumn", fields: [sourceColumnId], references: [id], onDelete: Cascade) // The source column that is being "referenced" by another column
   sourceColumnId String
-  targetColumn   TableColumn @relation("TargetColumn", fields: [targetColumnId], references: [id]) // The target column that is referencing a column of the target table
+  targetColumn   TableColumn @relation("TargetColumn", fields: [targetColumnId], references: [id], onDelete: Cascade) // The target column that is referencing a column of the target table
   targetColumnId String
 
   @@map("column-relation")
