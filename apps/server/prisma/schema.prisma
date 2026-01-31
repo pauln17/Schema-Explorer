@@ -14,59 +14,61 @@ datasource db {
 }
 
 model User {
-  id                  String               @id @default(cuid())
-  email               String               @unique
-  name                String?
-  role                Role                 @default(USER)
-  schemas             Schema[]
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  emailVerified       Boolean              @default(false)
-  image               String?
-  sessions            Session[]
-  accounts            Account[]
-  schemaCollaborators SchemaCollaborator[]
+  id                   String                @id @default(uuid())
+  email                String                @unique
+  name                 String?
+  role                 Role                  @default(USER)
+  schemas              Schema[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  emailVerified        Boolean               @default(false)
+  image                String?
+  sessions             Session[]
+  accounts             Account[]
+  schemaCollaborations SchemaCollaboration[]
 
   @@map("user")
 }
 
 model Schema {
-  id                  Int                  @id @default(autoincrement())
-  user                User                 @relation(fields: [userId], references: [id])
-  userId              String
-  isPublished         Boolean              @default(false)
-  schemaTable         SchemaTable[]
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  schemaCollaborators SchemaCollaborator[]
+  id                   String                @id @default(uuid())
+  user                 User                  @relation(fields: [userId], references: [id])
+  userId               String
+  name                 String
+  isPublished          Boolean               @default(false)
+  schemaTable          SchemaTable[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  schemaCollaborations SchemaCollaboration[]
 
   @@map("schema")
 }
 
-model SchemaCollaborator {
-  id       Int              @id @default(autoincrement())
+model SchemaCollaboration {
+  id       String           @id @default(uuid())
   schema   Schema           @relation(fields: [schemaId], references: [id])
-  schemaId Int
+  schemaId String
   user     User             @relation(fields: [userId], references: [id])
   userId   String
   role     CollaboratorRole @default(VIEWER)
 
   @@unique([schemaId, userId])
+  @@map("schema-collaboration")
 }
 
 model SchemaTable {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(uuid())
   schema      Schema        @relation(fields: [schemaId], references: [id])
-  schemaId    Int
+  schemaId    String
   tableColumn TableColumn[]
 
   @@map("schema-table")
 }
 
 model TableColumn {
-  id            Int         @id @default(autoincrement())
+  id            String      @id @default(uuid())
   schemaTable   SchemaTable @relation(fields: [schemaTableId], references: [id])
-  schemaTableId Int
+  schemaTableId String
 
   // A relation is specified because there are two instances of ColumnReferences[] -- one for outgoing, one for incoming
   outgoingReferences ColumnRelation[] @relation("SourceColumn") // Points to other columns
@@ -76,11 +78,11 @@ model TableColumn {
 }
 
 model ColumnRelation {
-  id             Int         @id @default(autoincrement())
+  id             String      @id @default(uuid())
   sourceColumn   TableColumn @relation("SourceColumn", fields: [sourceColumnId], references: [id]) // The source column that is being "referenced" by another column
-  sourceColumnId Int
+  sourceColumnId String
   targetColumn   TableColumn @relation("TargetColumn", fields: [targetColumnId], references: [id]) // The target column that is referencing a column of the target table
-  targetColumnId Int
+  targetColumnId String
 
   @@map("column-relation")
 }

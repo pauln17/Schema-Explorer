@@ -20,8 +20,9 @@ CREATE TABLE "user" (
 
 -- CreateTable
 CREATE TABLE "schema" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "isPublished" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -30,36 +31,36 @@ CREATE TABLE "schema" (
 );
 
 -- CreateTable
-CREATE TABLE "SchemaCollaborator" (
-    "id" SERIAL NOT NULL,
-    "schemaId" INTEGER NOT NULL,
+CREATE TABLE "schema-collaboration" (
+    "id" TEXT NOT NULL,
+    "schemaId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "role" "CollaboratorRole" NOT NULL DEFAULT 'VIEWER',
 
-    CONSTRAINT "SchemaCollaborator_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "schema-collaboration_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "schema-table" (
-    "id" SERIAL NOT NULL,
-    "schemaId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "schemaId" TEXT NOT NULL,
 
     CONSTRAINT "schema-table_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "table-column" (
-    "id" SERIAL NOT NULL,
-    "schemaTableId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "schemaTableId" TEXT NOT NULL,
 
     CONSTRAINT "table-column_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "column-relation" (
-    "id" SERIAL NOT NULL,
-    "sourceColumnId" INTEGER NOT NULL,
-    "targetColumnId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "sourceColumnId" TEXT NOT NULL,
+    "targetColumnId" TEXT NOT NULL,
 
     CONSTRAINT "column-relation_pkey" PRIMARY KEY ("id")
 );
@@ -113,7 +114,7 @@ CREATE TABLE "verification" (
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SchemaCollaborator_schemaId_userId_key" ON "SchemaCollaborator"("schemaId", "userId");
+CREATE UNIQUE INDEX "schema-collaboration_schemaId_userId_key" ON "schema-collaboration"("schemaId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
@@ -122,10 +123,10 @@ CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 ALTER TABLE "schema" ADD CONSTRAINT "schema_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SchemaCollaborator" ADD CONSTRAINT "SchemaCollaborator_schemaId_fkey" FOREIGN KEY ("schemaId") REFERENCES "schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "schema-collaboration" ADD CONSTRAINT "schema-collaboration_schemaId_fkey" FOREIGN KEY ("schemaId") REFERENCES "schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SchemaCollaborator" ADD CONSTRAINT "SchemaCollaborator_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "schema-collaboration" ADD CONSTRAINT "schema-collaboration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "schema-table" ADD CONSTRAINT "schema-table_schemaId_fkey" FOREIGN KEY ("schemaId") REFERENCES "schema"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

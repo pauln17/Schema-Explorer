@@ -1,9 +1,14 @@
-import { Router, Request, Response } from 'express';
+import { Router } from "express";
+import {
+  createColumnRelation,
+  updateColumnRelation,
+  deleteColumnRelation,
+} from "../controllers/column-relation";
 
 const router = Router();
 
-router.get('/', async (req: Request, res: Response) => {
-
-});
+router.post("/", createColumnRelation);
+router.put("/:id", updateColumnRelation);
+router.delete("/:id", deleteColumnRelation);
 
 export default router;
